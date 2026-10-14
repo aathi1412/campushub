@@ -8,6 +8,7 @@ import { healthRoutes } from "./modules/health/health.routes.js";
 import { authRoutes } from "./modules/auth/auth.routes.js";
 import { usersRoutes } from "./modules/users/users.routes.js";
 import { eventsRoutes } from "./modules/events/events.routes.js";
+import { eventRegistrationsRoutes } from "./modules/event-registrations/event-registrations.routes.js";
 
 export async function buildApp(opts: FastifyServerOptions = {}): Promise<FastifyInstance> {
   const fastify = Fastify({
@@ -35,6 +36,7 @@ export async function buildApp(opts: FastifyServerOptions = {}): Promise<Fastify
   await fastify.register(authRoutes, { prefix: "/api/v1/auth" });
   await fastify.register(usersRoutes, { prefix: "/api/v1/users" });
   await fastify.register(eventsRoutes, { prefix: "/api/v1/events" });
+  await fastify.register(eventRegistrationsRoutes, { prefix: "/api/v1" });
 
   return fastify;
 }

@@ -37,6 +37,12 @@ import type { CampusEvent } from "../events.api.js";
 import { getEventByIdApi, deleteEventApi } from "../events.api.js";
 import { EventFormDialog } from "../components/EventFormDialog.js";
 import { useAuth } from "../../auth/AuthContext.js";
+import {
+  registerEventApi,
+  cancelRegistrationApi,
+  getRegistrationStatusApi,
+} from "../../event-registrations/registrations.api.js";
+import { EventParticipantsDialog } from "../../event-registrations/components/EventParticipantsDialog.js";
 
 export const EventDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +56,13 @@ export const EventDetailPage: React.FC = () => {
   // Dialogs
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
+  const [participantsDialogOpen, setParticipantsDialogOpen] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  // Registration State
+  const [isRegistered, setIsRegistered] = useState<boolean>(false);
+  const [registrationActionLoading, setRegistrationActionLoading] = useState<boolean>(false);
+  const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
 
   const fetchEvent = async () => {
     if (!id) return;
@@ -66,9 +78,81 @@ export const EventDetailPage: React.FC = () => {
     }
   };
 
+  const checkRegistration = async () => {
+    if (!id || !user) {
+      setIsRegistered(false);
+      return;
+    }
+    try {
+      const res = await getRegistrationStatusApi(id);
+      setIsRegistered(res.data.isRegistered);
+    } catch {
+      setIsRegistered(false);
+    }
+  };
+
   useEffect(() => {
     fetchEvent();
   }, [id]);
+
+  useEffect(() => {
+    if (user && id) {
+      checkRegistration();
+    } else {
+      setIsRegistered(false);
+    }
+  }, [user, id]);
+
+  const handleRegister = async () => {
+    if (!user) {
+      navigate("/login", { state: { from: { pathname: `/events/${id}` } } });
+      return;
+    }
+    if (!id) return;
+
+    setRegistrationActionLoading(true);
+    setRegistrationMessage(null);
+    try {
+      await registerEventApi(id);
+      setIsRegistered(true);
+      setRegistrationMessage("Successfully registered for this event!");
+      if (event) {
+        setEvent({
+          ...event,
+          _count: {
+            registrations: (event._count?.registrations || 0) + 1,
+          },
+        });
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error?.message || "Failed to register for event.");
+    } finally {
+      setRegistrationActionLoading(false);
+    }
+  };
+
+  const handleCancelRegistration = async () => {
+    if (!id) return;
+    setRegistrationActionLoading(true);
+    setRegistrationMessage(null);
+    try {
+      await cancelRegistrationApi(id);
+      setIsRegistered(false);
+      setRegistrationMessage("Registration cancelled successfully.");
+      if (event) {
+        setEvent({
+          ...event,
+          _count: {
+            registrations: Math.max(0, (event._count?.registrations || 1) - 1),
+          },
+        });
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.error?.message || "Failed to cancel registration.");
+    } finally {
+      setRegistrationActionLoading(false);
+    }
+  };
 
   const isOrganizer = user && event && user.id === event.organizerId;
   const isAdmin = user?.role === "ADMIN";
@@ -271,22 +355,53 @@ export const EventDetailPage: React.FC = () => {
 
               <Divider sx={{ my: 2 }} />
 
-              {/* Module 4 placeholder for event registration action */}
-              <Button
-                variant="contained"
-                fullWidth
-                size="large"
-                disabled={isDeadlinePassed || spotsLeft === 0 || event.status !== "PUBLISHED"}
-                sx={{ height: 46, fontWeight: 600 }}
-              >
-                {event.status !== "PUBLISHED"
-                  ? "Event Not Active"
-                  : isDeadlinePassed
-                  ? "Registration Closed"
-                  : spotsLeft === 0
-                  ? "Capacity Reached"
-                  : "Register for Event"}
-              </Button>
+              {registrationMessage && (
+                <Alert severity={isRegistered ? "success" : "info"} sx={{ mb: 2 }}>
+                  {registrationMessage}
+                </Alert>
+              )}
+
+              {isRegistered ? (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                  <Chip
+                    icon={<Users size={16} />}
+                    label="You are registered for this event"
+                    color="success"
+                    sx={{ fontWeight: 600, py: 2 }}
+                  />
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    fullWidth
+                    disabled={registrationActionLoading}
+                    onClick={handleCancelRegistration}
+                    sx={{ height: 42, fontWeight: 600 }}
+                  >
+                    {registrationActionLoading ? <CircularProgress size={18} color="inherit" /> : "Cancel Registration"}
+                  </Button>
+                </Box>
+              ) : (
+                <Button
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                  onClick={handleRegister}
+                  disabled={registrationActionLoading || isDeadlinePassed || spotsLeft === 0 || event.status !== "PUBLISHED"}
+                  sx={{ height: 46, fontWeight: 600 }}
+                >
+                  {registrationActionLoading ? (
+                    <CircularProgress size={22} color="inherit" />
+                  ) : event.status !== "PUBLISHED" ? (
+                    "Event Not Active"
+                  ) : isDeadlinePassed ? (
+                    "Registration Closed"
+                  ) : spotsLeft === 0 ? (
+                    "Capacity Reached"
+                  ) : (
+                    "Register for Event"
+                  )}
+                </Button>
+              )}
             </CardContent>
           </Card>
 
@@ -328,6 +443,15 @@ export const EventDetailPage: React.FC = () => {
                 </Typography>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, mt: 2 }}>
                   <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<Users size={16} />}
+                    onClick={() => setParticipantsDialogOpen(true)}
+                    fullWidth
+                  >
+                    View Attendees & Attendance
+                  </Button>
+                  <Button
                     variant="outlined"
                     startIcon={<Edit size={16} />}
                     onClick={() => setEditDialogOpen(true)}
@@ -357,6 +481,14 @@ export const EventDetailPage: React.FC = () => {
         onClose={() => setEditDialogOpen(false)}
         initialEvent={event}
         onSuccess={(updated) => setEvent(updated)}
+      />
+
+      {/* Participants & Attendance Dialog */}
+      <EventParticipantsDialog
+        open={participantsDialogOpen}
+        onClose={() => setParticipantsDialogOpen(false)}
+        eventId={event.id}
+        eventTitle={event.title}
       />
 
       {/* Delete / Cancel Confirmation Dialog */}
