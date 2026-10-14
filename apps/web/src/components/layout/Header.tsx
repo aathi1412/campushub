@@ -92,6 +92,18 @@ export const Header: React.FC = () => {
             </Box>
           </Box>
 
+          {/* Navigation Links */}
+          <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 3 }}>
+            <Button
+              component={RouterLink}
+              to="/events"
+              color="inherit"
+              sx={{ fontWeight: 600, color: "text.secondary", "&:hover": { color: "primary.main" } }}
+            >
+              Events
+            </Button>
+          </Box>
+
           {/* Right Navigation Controls */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <HealthCheckBadge />

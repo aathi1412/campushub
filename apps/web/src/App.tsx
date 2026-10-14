@@ -31,13 +31,15 @@ import { AuthProvider, useAuth } from "./features/auth/AuthContext.js";
 import { LoginPage } from "./features/auth/pages/LoginPage.js";
 import { RegisterPage } from "./features/auth/pages/RegisterPage.js";
 import { ProfilePage } from "./features/users/pages/ProfilePage.js";
+import { EventsListPage } from "./features/events/pages/EventsListPage.js";
+import { EventDetailPage } from "./features/events/pages/EventDetailPage.js";
 import { ProtectedRoute } from "./components/common/ProtectedRoute.js";
 
 const modulesList = [
   { id: 1, title: "Module 1: Backend Foundation", status: "Completed", desc: "Fastify 5, Prisma 7, MySQL, centralized errors & CORS", icon: Server },
   { id: 2, title: "Module 2: Auth & Users", status: "Completed", desc: "Argon2id, Fastify JWT, refresh tokens, RBAC & profiles", icon: ShieldCheck },
-  { id: 3, title: "Module 3: Events Management", status: "Next", desc: "Campus events lifecycle, filtering, pagination", icon: Calendar },
-  { id: 4, title: "Module 4: Registrations & Attendance", status: "Upcoming", desc: "Capacity transactions, attendance tracking", icon: CheckCircle2 },
+  { id: 3, title: "Module 3: Events Management", status: "Completed", desc: "Campus events lifecycle, filtering, pagination", icon: Calendar },
+  { id: 4, title: "Module 4: Registrations & Attendance", status: "Next", desc: "Capacity transactions, attendance tracking", icon: CheckCircle2 },
   { id: 5, title: "Module 5: Clubs & Memberships", status: "Upcoming", desc: "Club directories, join requests, approval flows", icon: Users },
   { id: 6, title: "Module 6: Projects Collaboration", status: "Upcoming", desc: "Student teams, task Kanban, invitation workflows", icon: Briefcase },
   { id: 7, title: "Module 7: Campus Community", status: "Upcoming", desc: "Announcements, lost-and-found, polls & voting", icon: MessageSquare },
@@ -170,6 +172,8 @@ export const App: React.FC = () => {
             <Box component="main" sx={{ flexGrow: 1 }}>
               <Routes>
                 <Route path="/" element={<DashboardHome />} />
+                <Route path="/events" element={<EventsListPage />} />
+                <Route path="/events/:id" element={<EventDetailPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route
