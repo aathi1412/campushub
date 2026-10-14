@@ -1,0 +1,408 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  STUDENT
+  CLUB_LEADER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum EventCategory {
+  ACADEMIC
+  CULTURAL
+  SPORTS
+  TECHNICAL
+  WORKSHOP
+  OTHER
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  CANCELLED
+  ATTENDED
+}
+
+enum MembershipStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  LEFT
+}
+
+enum ClubMembershipRole {
+  MEMBER
+  OFFICER
+  LEADER
+}
+
+enum ProjectVisibility {
+  PUBLIC
+  CAMPUS_ONLY
+  PRIVATE
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum ProjectMemberRole {
+  OWNER
+  MAINTAINER
+  CONTRIBUTOR
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+enum PostType {
+  ANNOUNCEMENT
+  GENERAL
+  LOST_AND_FOUND
+}
+
+enum NotificationType {
+  EVENT_REGISTRATION
+  EVENT_CANCELLED
+  CLUB_MEMBERSHIP_UPDATE
+  PROJECT_INVITATION
+  TASK_ASSIGNED
+  COMMUNITY_ANNOUNCEMENT
+  GENERAL
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String
+  password     String
+  role         Role          @default(STUDENT)
+  status       AccountStatus @default(ACTIVE)
+  avatarUrl    String?
+  department   String?
+  yearOfStudy  Int?
+  bio          String?       @db.Text
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  refreshTokens       RefreshToken[]
+  organizedEvents     Event[]               @relation("EventOrganizer")
+  eventRegistrations  EventRegistration[]
+  ledClubs            Club[]                @relation("ClubLeader")
+  clubMemberships     ClubMembership[]
+  ownedProjects       Project[]             @relation("ProjectOwner")
+  projectMemberships  ProjectMember[]
+  sentInvitations     ProjectInvitation[]   @relation("SentInvitations")
+  receivedInvitations ProjectInvitation[]   @relation("ReceivedInvitations")
+  assignedTasks       ProjectTask[]         @relation("TaskAssignee")
+  createdTasks        ProjectTask[]         @relation("TaskCreator")
+  posts               CommunityPost[]
+  comments            CommunityComment[]
+  createdPolls        Poll[]                @relation("PollCreator")
+  pollVotes           PollVote[]
+  notifications       Notification[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  token     String    @unique @db.VarChar(500)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Event {
+  id                   String             @id @default(uuid())
+  title                String             @db.VarChar(255)
+  description          String             @db.Text
+  category             EventCategory      @default(OTHER)
+  venue                String             @db.VarChar(255)
+  startTime            DateTime
+  endTime              DateTime
+  registrationDeadline DateTime
+  capacity             Int
+  bannerUrl            String?
+  status               EventStatus        @default(PUBLISHED)
+  organizerId          String
+  organizer            User               @relation("EventOrganizer", fields: [organizerId], references: [id])
+  clubId               String?
+  club                 Club?              @relation(fields: [clubId], references: [id], onDelete: SetNull)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  registrations EventRegistration[]
+
+  @@index([status])
+  @@index([startTime])
+  @@index([organizerId])
+  @@index([clubId])
+  @@map("events")
+}
+
+model EventRegistration {
+  id           String             @id @default(uuid())
+  eventId      String
+  event        Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status       RegistrationStatus @default(REGISTERED)
+  registeredAt DateTime           @default(now())
+  attendedAt   DateTime?
+
+  @@unique([eventId, userId])
+  @@index([userId])
+  @@index([eventId])
+  @@map("event_registrations")
+}
+
+model Club {
+  id          String           @id @default(uuid())
+  name        String           @unique @db.VarChar(150)
+  description String           @db.Text
+  category    String           @db.VarChar(100)
+  logoUrl     String?
+  bannerUrl   String?
+  leaderId    String
+  leader      User             @relation("ClubLeader", fields: [leaderId], references: [id])
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  memberships ClubMembership[]
+  events      Event[]
+
+  @@index([leaderId])
+  @@map("clubs")
+}
+
+model ClubMembership {
+  id        String             @id @default(uuid())
+  clubId    String
+  club      Club               @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    MembershipStatus   @default(PENDING)
+  role      ClubMembershipRole @default(MEMBER)
+  joinedAt  DateTime?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@unique([clubId, userId])
+  @@index([userId])
+  @@index([clubId])
+  @@map("club_memberships")
+}
+
+model Project {
+  id           String            @id @default(uuid())
+  title        String            @db.VarChar(200)
+  description  String            @db.Text
+  technologies String            @db.VarChar(500)
+  ownerId      String
+  owner        User              @relation("ProjectOwner", fields: [ownerId], references: [id])
+  visibility   ProjectVisibility @default(CAMPUS_ONLY)
+  status       ProjectStatus     @default(IN_PROGRESS)
+  repoUrl      String?           @db.VarChar(500)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  members     ProjectMember[]
+  invitations ProjectInvitation[]
+  tasks       ProjectTask[]
+
+  @@index([ownerId])
+  @@map("projects")
+}
+
+model ProjectMember {
+  id        String            @id @default(uuid())
+  projectId String
+  project   Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      ProjectMemberRole @default(CONTRIBUTOR)
+  joinedAt  DateTime          @default(now())
+
+  @@unique([projectId, userId])
+  @@index([userId])
+  @@index([projectId])
+  @@map("project_members")
+}
+
+model ProjectInvitation {
+  id        String           @id @default(uuid())
+  projectId String
+  project   Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  inviterId String
+  inviter   User             @relation("SentInvitations", fields: [inviterId], references: [id])
+  inviteeId String
+  invitee   User             @relation("ReceivedInvitations", fields: [inviteeId], references: [id])
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([projectId, inviteeId])
+  @@index([inviteeId])
+  @@index([inviterId])
+  @@map("project_invitations")
+}
+
+model ProjectTask {
+  id          String       @id @default(uuid())
+  projectId   String
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String       @db.VarChar(200)
+  description String?      @db.Text
+  priority    TaskPriority @default(MEDIUM)
+  status      TaskStatus   @default(TODO)
+  assigneeId  String?
+  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  creatorId   String
+  creator     User         @relation("TaskCreator", fields: [creatorId], references: [id])
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([projectId])
+  @@index([assigneeId])
+  @@map("project_tasks")
+}
+
+model CommunityPost {
+  id          String             @id @default(uuid())
+  authorId    String
+  author      User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  title       String             @db.VarChar(255)
+  content     String             @db.Text
+  type        PostType           @default(GENERAL)
+  isPinned    Boolean            @default(false)
+  isModerated Boolean            @default(false)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  comments    CommunityComment[]
+
+  @@index([authorId])
+  @@index([type])
+  @@map("community_posts")
+}
+
+model CommunityComment {
+  id        String        @id @default(uuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  content   String        @db.Text
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([postId])
+  @@index([authorId])
+  @@map("community_comments")
+}
+
+model Poll {
+  id        String       @id @default(uuid())
+  question  String       @db.VarChar(300)
+  creatorId String
+  creator   User         @relation("PollCreator", fields: [creatorId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime     @default(now())
+
+  options   PollOption[]
+  votes     PollVote[]
+
+  @@index([creatorId])
+  @@map("polls")
+}
+
+model PollOption {
+  id     String     @id @default(uuid())
+  pollId String
+  poll   Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  text   String     @db.VarChar(200)
+
+  votes  PollVote[]
+
+  @@index([pollId])
+  @@map("poll_options")
+}
+
+model PollVote {
+  id        String     @id @default(uuid())
+  pollId    String
+  poll      Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  optionId  String
+  option    PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+
+  @@unique([pollId, userId])
+  @@index([userId])
+  @@index([optionId])
+  @@map("poll_votes")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType @default(GENERAL)
+  title     String           @db.VarChar(200)
+  message   String           @db.Text
+  link      String?          @db.VarChar(500)
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
