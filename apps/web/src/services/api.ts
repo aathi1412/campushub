@@ -13,7 +13,7 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Centralized access token memory holder (avoid storing raw JWT tokens in localStorage)
+// Centralized access token memory holder (never in localStorage)
 let memoryAccessToken: string | null = null;
 
 export const setAccessToken = (token: string | null) => {
@@ -33,11 +33,76 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Centralized error handling
+// Response Interceptor: Seamless token refresh on 401 without infinite loops
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiErrorResponse>) => {
-    // Handled response or network failure
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+
+    // Do not attempt refresh for login, register, or refresh endpoints themselves
+    const isAuthEndpoint =
+      originalRequest?.url?.includes("/auth/login") ||
+      originalRequest?.url?.includes("/auth/register") ||
+      originalRequest?.url?.includes("/auth/refresh");
+
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            if (originalRequest.headers && token) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return apiClient(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshResponse = await axios.post<ApiResponse<{ accessToken: string }>>(
+          `${API_BASE_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+
+        const newAccessToken = refreshResponse.data.data.accessToken;
+        setAccessToken(newAccessToken);
+        processQueue(null, newAccessToken);
+
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        }
+        return apiClient(originalRequest);
+      } catch (refreshErr) {
+        processQueue(refreshErr, null);
+        setAccessToken(null);
+        return Promise.reject(refreshErr);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
     return Promise.reject(error);
   }
 );
