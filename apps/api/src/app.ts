@@ -13,6 +13,7 @@ import { clubsRoutes } from "./modules/clubs/clubs.routes.js";
 import { projectsRoutes } from "./modules/projects/projects.routes.js";
 import { communityRoutes } from "./modules/community/community.routes.js";
 import { notificationsRoutes } from "./modules/notifications/notifications.routes.js";
+import { adminRoutes } from "./modules/admin/admin.routes.js";
 
 export async function buildApp(opts: FastifyServerOptions = {}): Promise<FastifyInstance> {
   const fastify = Fastify({
@@ -45,6 +46,7 @@ export async function buildApp(opts: FastifyServerOptions = {}): Promise<Fastify
   await fastify.register(projectsRoutes, { prefix: "/api/v1/projects" });
   await fastify.register(communityRoutes, { prefix: "/api/v1/community" });
   await fastify.register(notificationsRoutes, { prefix: "/api/v1/notifications" });
+  await fastify.register(adminRoutes, { prefix: "/api/v1/admin" });
 
   return fastify;
 }

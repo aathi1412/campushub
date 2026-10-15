@@ -127,6 +127,16 @@ export const Header: React.FC = () => {
             >
               Community
             </Button>
+            {user?.role === "ADMIN" && (
+              <Button
+                component={RouterLink}
+                to="/admin"
+                color="secondary"
+                sx={{ fontWeight: 700 }}
+              >
+                Admin
+              </Button>
+            )}
           </Box>
 
           {/* Right Navigation Controls */}
@@ -179,6 +189,17 @@ export const Header: React.FC = () => {
                     </Typography>
                   </Box>
                   <Divider />
+                  {user.role === "ADMIN" && (
+                    <MenuItem
+                      component={RouterLink}
+                      to="/admin"
+                      onClick={handleMenuClose}
+                      sx={{ gap: 1.5, py: 1, fontWeight: 700, color: "secondary.main" }}
+                    >
+                      <Shield size={16} />
+                      Admin Console
+                    </MenuItem>
+                  )}
                   <MenuItem
                     component={RouterLink}
                     to="/notifications"
