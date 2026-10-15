@@ -94,22 +94,24 @@ export class EventsService {
     const limit = Math.min(100, Math.max(1, query.limit || 10));
     const skip = (page - 1) * limit;
 
-    const where: Prisma.EventWhereInput = {};
+    const andConditions: Prisma.EventWhereInput[] = [];
     const now = new Date();
 
     // 1. Text Search (title, description, venue)
     if (query.search?.trim()) {
       const term = query.search.trim();
-      where.OR = [
-        { title: { contains: term } },
-        { description: { contains: term } },
-        { venue: { contains: term } },
-      ];
+      andConditions.push({
+        OR: [
+          { title: { contains: term } },
+          { description: { contains: term } },
+          { venue: { contains: term } },
+        ],
+      });
     }
 
     // 2. Category Filter
     if (query.category) {
-      where.category = query.category;
+      andConditions.push({ category: query.category });
     }
 
     // 3. Status Filter & Visibility Rules
@@ -120,29 +122,34 @@ export class EventsService {
       if (query.status === "DRAFT" && !isStaffOrAdmin && query.organizerId !== currentUserId) {
         throw new ForbiddenError("You cannot view draft events of other organizers");
       }
-      where.status = query.status;
+      andConditions.push({ status: query.status });
     } else if (!isStaffOrAdmin) {
       // By default, exclude DRAFT unless the event belongs to the current user
-      where.OR = [
-        { status: { in: ["PUBLISHED", "CANCELLED", "COMPLETED"] } },
-        ...(currentUserId ? [{ organizerId: currentUserId, status: "DRAFT" as const }] : []),
-      ];
+      andConditions.push({
+        OR: [
+          { status: { in: ["PUBLISHED", "CANCELLED", "COMPLETED"] } },
+          ...(currentUserId ? [{ organizerId: currentUserId, status: "DRAFT" as const }] : []),
+        ],
+      });
     }
 
     // 4. Timeframe Filter
     if (query.timeframe === "upcoming") {
-      where.startTime = { gte: now };
+      andConditions.push({ startTime: { gte: now } });
     } else if (query.timeframe === "past") {
-      where.endTime = { lt: now };
+      andConditions.push({ endTime: { lt: now } });
     }
 
     // 5. Organizer & Club Filters
     if (query.organizerId) {
-      where.organizerId = query.organizerId;
+      andConditions.push({ organizerId: query.organizerId });
     }
     if (query.clubId) {
-      where.clubId = query.clubId;
+      andConditions.push({ clubId: query.clubId });
     }
+
+    const where: Prisma.EventWhereInput =
+      andConditions.length > 0 ? { AND: andConditions } : {};
 
     // 6. Sorting
     const sortBy = query.sortBy || "startTime";

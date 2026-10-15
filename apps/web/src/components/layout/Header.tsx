@@ -14,7 +14,7 @@ import {
   Avatar,
   Divider,
 } from "@mui/material";
-import { GraduationCap, LogOut, User as UserIcon, Shield, Ticket } from "lucide-react";
+import { GraduationCap, LogOut, User as UserIcon, Shield, Ticket, Users as UsersIcon } from "lucide-react";
 import { HealthCheckBadge } from "../common/HealthCheckBadge.js";
 import { useAuth } from "../../features/auth/AuthContext.js";
 
@@ -102,6 +102,14 @@ export const Header: React.FC = () => {
             >
               Events
             </Button>
+            <Button
+              component={RouterLink}
+              to="/clubs"
+              color="inherit"
+              sx={{ fontWeight: 600, color: "text.secondary", "&:hover": { color: "primary.main" } }}
+            >
+              Clubs
+            </Button>
           </Box>
 
           {/* Right Navigation Controls */}
@@ -160,6 +168,15 @@ export const Header: React.FC = () => {
                   >
                     <Ticket size={16} />
                     My Registrations
+                  </MenuItem>
+                  <MenuItem
+                    component={RouterLink}
+                    to="/my-clubs"
+                    onClick={handleMenuClose}
+                    sx={{ gap: 1.5, py: 1 }}
+                  >
+                    <UsersIcon size={16} />
+                    My Clubs
                   </MenuItem>
                   <MenuItem
                     component={RouterLink}

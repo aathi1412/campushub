@@ -34,6 +34,9 @@ import { ProfilePage } from "./features/users/pages/ProfilePage.js";
 import { EventsListPage } from "./features/events/pages/EventsListPage.js";
 import { EventDetailPage } from "./features/events/pages/EventDetailPage.js";
 import { MyRegistrationsPage } from "./features/event-registrations/pages/MyRegistrationsPage.js";
+import { ClubsListPage } from "./features/clubs/pages/ClubsListPage.js";
+import { ClubDetailPage } from "./features/clubs/pages/ClubDetailPage.js";
+import { MyClubsPage } from "./features/clubs/pages/MyClubsPage.js";
 import { ProtectedRoute } from "./components/common/ProtectedRoute.js";
 
 const modulesList = [
@@ -41,8 +44,8 @@ const modulesList = [
   { id: 2, title: "Module 2: Auth & Users", status: "Completed", desc: "Argon2id, Fastify JWT, refresh tokens, RBAC & profiles", icon: ShieldCheck },
   { id: 3, title: "Module 3: Events Management", status: "Completed", desc: "Campus events lifecycle, filtering, pagination", icon: Calendar },
   { id: 4, title: "Module 4: Registrations & Attendance", status: "Completed", desc: "Capacity transactions, attendance tracking", icon: CheckCircle2 },
-  { id: 5, title: "Module 5: Clubs & Memberships", status: "Next", desc: "Club directories, join requests, approval flows", icon: Users },
-  { id: 6, title: "Module 6: Projects Collaboration", status: "Upcoming", desc: "Student teams, task Kanban, invitation workflows", icon: Briefcase },
+  { id: 5, title: "Module 5: Clubs & Memberships", status: "Completed", desc: "Club directories, join requests, approval flows", icon: Users },
+  { id: 6, title: "Module 6: Projects Collaboration", status: "Next", desc: "Student teams, task Kanban, invitation workflows", icon: Briefcase },
   { id: 7, title: "Module 7: Campus Community", status: "Upcoming", desc: "Announcements, lost-and-found, polls & voting", icon: MessageSquare },
   { id: 8, title: "Module 8: Notifications", status: "Upcoming", desc: "In-app alerts, unread counts, event reminders", icon: Bell },
   { id: 9, title: "Module 9: Admin Dashboard", status: "Upcoming", desc: "Platform metrics, role moderation & controls", icon: Sliders },
@@ -175,6 +178,16 @@ export const App: React.FC = () => {
                 <Route path="/" element={<DashboardHome />} />
                 <Route path="/events" element={<EventsListPage />} />
                 <Route path="/events/:id" element={<EventDetailPage />} />
+                <Route path="/clubs" element={<ClubsListPage />} />
+                <Route path="/clubs/:id" element={<ClubDetailPage />} />
+                <Route
+                  path="/my-clubs"
+                  element={
+                    <ProtectedRoute>
+                      <MyClubsPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route
