@@ -36,7 +36,6 @@ import {
   Layers,
   LayoutDashboard,
 } from "lucide-react";
-import { HealthCheckBadge } from "../common/HealthCheckBadge.js";
 import { useAuth } from "../../features/auth/AuthContext.js";
 import { NotificationBell } from "../../features/notifications/NotificationBell.js";
 
@@ -78,55 +77,140 @@ export const Header: React.FC = () => {
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ justifyContent: "space-between", height: 68 }}>
-          {/* Logo & Brand */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Container
+        maxWidth="xl"
+        sx={{
+          px: {
+            xs: "12px",
+            sm: "16px",
+            "@media (min-width: 1024px)": "32px",
+          },
+        }}
+      >
+        <Toolbar
+          disableGutters
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+            minHeight: {
+              xs: "68px",
+              sm: "72px",
+              "@media (min-width: 1024px)": "80px",
+            },
+            height: {
+              xs: "68px",
+              sm: "72px",
+              "@media (min-width: 1024px)": "80px",
+            },
+          }}
+        >
+          {/* Left: Mobile Menu & Brand */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              minWidth: 0,
+              gap: { xs: 0.75, sm: 1.25, "@media (min-width: 1024px)": 1.5 },
+            }}
+          >
             {/* Mobile Hamburger Button */}
             <IconButton
               color="inherit"
-              aria-label="open navigation menu"
+              aria-label="Open navigation menu"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ display: { xs: "flex", md: "none" }, mr: 0.5 }}
+              sx={{
+                display: {
+                  xs: "inline-flex",
+                  "@media (min-width: 1024px)": { display: "none" },
+                },
+                width: 44,
+                height: 44,
+                p: 1,
+                mr: { xs: 0.25, sm: 0.5 },
+                color: "text.primary",
+                "&:hover": { bgcolor: "action.hover" },
+              }}
             >
-              <MenuIcon size={22} />
+              <MenuIcon size={24} />
             </IconButton>
 
+            {/* Brand Logo & Name */}
             <Box
               component={RouterLink}
               to="/"
               sx={{
                 display: "flex",
                 alignItems: "center",
-                gap: 1.5,
+                gap: { xs: 1, sm: 1.25, "@media (min-width: 1024px)": 1.5 },
                 textDecoration: "none",
                 color: "inherit",
+                minWidth: 0,
+                flexShrink: 0,
               }}
             >
               <Box
                 sx={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 1.5,
+                  width: {
+                    xs: 38,
+                    "@media (min-width: 360px)": 40,
+                    sm: 42,
+                    "@media (min-width: 1024px)": 48,
+                  },
+                  height: {
+                    xs: 38,
+                    "@media (min-width: 360px)": 40,
+                    sm: 42,
+                    "@media (min-width: 1024px)": 48,
+                  },
+                  borderRadius: { xs: 1.5, "@media (min-width: 1024px)": 2 },
                   bgcolor: "primary.main",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "white",
-                  boxShadow: "0 2px 4px rgba(30, 64, 175, 0.2)",
+                  boxShadow: "0 2px 6px rgba(30, 64, 175, 0.25)",
+                  flexShrink: 0,
                 }}
               >
-                <GraduationCap size={22} />
+                <GraduationCap
+                  size={24}
+                  className="w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] min-[1024px]:w-[28px] min-[1024px]:h-[28px]"
+                />
               </Box>
-              <Typography variant="h6" fontWeight={700} sx={{ letterSpacing: "-0.02em", color: "text.primary" }}>
+              <Typography
+                variant="h6"
+                fontWeight={700}
+                noWrap
+                sx={{
+                  letterSpacing: "-0.02em",
+                  color: "text.primary",
+                  fontSize: {
+                    xs: "16px",
+                    "@media (min-width: 360px)": "18px",
+                    sm: "19px",
+                    "@media (min-width: 1024px)": "22px",
+                  },
+                  lineHeight: 1.2,
+                  whiteSpace: "nowrap",
+                }}
+              >
                 CampusHub
               </Typography>
             </Box>
           </Box>
 
-          {/* Desktop Navigation Links */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
+          {/* Desktop Navigation Links (>=1024px) */}
+          <Box
+            sx={{
+              display: {
+                xs: "none",
+                "@media (min-width: 1024px)": "flex",
+              },
+              alignItems: "center",
+              gap: { "@media (min-width: 1024px)": "28px", xl: "32px" },
+            }}
+          >
             <Button
               component={RouterLink}
               to="/events"
@@ -134,7 +218,9 @@ export const Header: React.FC = () => {
               sx={{
                 fontWeight: 600,
                 color: "text.secondary",
-                px: 1.5,
+                fontSize: "16px",
+                px: 1,
+                py: 0.75,
                 "&:hover": { color: "primary.main", bgcolor: "rgba(30, 64, 175, 0.04)" },
               }}
             >
@@ -147,7 +233,9 @@ export const Header: React.FC = () => {
               sx={{
                 fontWeight: 600,
                 color: "text.secondary",
-                px: 1.5,
+                fontSize: "16px",
+                px: 1,
+                py: 0.75,
                 "&:hover": { color: "primary.main", bgcolor: "rgba(30, 64, 175, 0.04)" },
               }}
             >
@@ -160,7 +248,9 @@ export const Header: React.FC = () => {
               sx={{
                 fontWeight: 600,
                 color: "text.secondary",
-                px: 1.5,
+                fontSize: "16px",
+                px: 1,
+                py: 0.75,
                 "&:hover": { color: "primary.main", bgcolor: "rgba(30, 64, 175, 0.04)" },
               }}
             >
@@ -173,7 +263,9 @@ export const Header: React.FC = () => {
               sx={{
                 fontWeight: 600,
                 color: "text.secondary",
-                px: 1.5,
+                fontSize: "16px",
+                px: 1,
+                py: 0.75,
                 "&:hover": { color: "primary.main", bgcolor: "rgba(30, 64, 175, 0.04)" },
               }}
             >
@@ -186,8 +278,9 @@ export const Header: React.FC = () => {
               sx={{
                 fontWeight: 500,
                 color: "text.secondary",
-                px: 1.5,
-                fontSize: "0.875rem",
+                fontSize: "16px",
+                px: 1,
+                py: 0.75,
                 "&:hover": { color: "primary.main", bgcolor: "rgba(30, 64, 175, 0.04)" },
               }}
             >
@@ -200,7 +293,7 @@ export const Header: React.FC = () => {
                 color="secondary"
                 variant="outlined"
                 size="small"
-                sx={{ fontWeight: 700, ml: 1 }}
+                sx={{ fontWeight: 700, fontSize: "15px", px: 1.5, py: 0.5, ml: 0.5 }}
               >
                 Admin
               </Button>
@@ -208,29 +301,42 @@ export const Header: React.FC = () => {
           </Box>
 
           {/* Right Navigation Controls */}
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <HealthCheckBadge />
-
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: {
+                xs: 0.75,
+                sm: 1.5,
+                "@media (min-width: 1024px)": 2,
+              },
+              flexShrink: 0,
+            }}
+          >
             {isAuthenticated && user ? (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.75, sm: 1.5, "@media (min-width: 1024px)": 2 } }}>
                 <NotificationBell />
 
                 <Chip
-                  icon={<Shield size={12} />}
+                  icon={<Shield size={14} />}
                   label={user.role}
                   size="small"
                   color={user.role === "ADMIN" ? "secondary" : "primary"}
                   variant="outlined"
-                  sx={{ fontWeight: 600, fontSize: "0.7rem", display: { xs: "none", sm: "flex" } }}
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: "0.75rem",
+                    display: { xs: "none", sm: "flex" },
+                  }}
                 />
 
-                <IconButton onClick={handleMenuOpen} size="small" sx={{ p: 0.5 }}>
+                <IconButton onClick={handleMenuOpen} size="small" sx={{ p: { xs: 0.25, sm: 0.5 } }}>
                   <Avatar
                     sx={{
-                      width: 34,
-                      height: 34,
+                      width: { xs: 36, sm: 38, "@media (min-width: 1024px)": 44 },
+                      height: { xs: 36, sm: 38, "@media (min-width: 1024px)": 44 },
                       bgcolor: "primary.main",
-                      fontSize: "0.875rem",
+                      fontSize: { xs: "0.875rem", sm: "0.9375rem", "@media (min-width: 1024px)": "1.05rem" },
                       fontWeight: 600,
                     }}
                   >
@@ -329,13 +435,34 @@ export const Header: React.FC = () => {
                 </Menu>
               </Box>
             ) : (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: { xs: 0.75, sm: 1.25, "@media (min-width: 1024px)": 2 },
+                  flexShrink: 0,
+                }}
+              >
                 <Button
                   component={RouterLink}
                   to="/login"
                   variant="text"
-                  size="small"
-                  sx={{ fontWeight: 600 }}
+                  color="inherit"
+                  sx={{
+                    fontWeight: 600,
+                    color: "text.primary",
+                    fontSize: {
+                      xs: "14px",
+                      sm: "15px",
+                      "@media (min-width: 1024px)": "16px",
+                    },
+                    px: { xs: 0.75, sm: 1.5, "@media (min-width: 1024px)": 2 },
+                    py: { xs: 0.5, sm: 0.75, "@media (min-width: 1024px)": 1 },
+                    minWidth: "auto",
+                    whiteSpace: "nowrap",
+                    textTransform: "none",
+                    "&:hover": { color: "primary.main", bgcolor: "rgba(30, 64, 175, 0.04)" },
+                  }}
                 >
                   Sign In
                 </Button>
@@ -343,10 +470,58 @@ export const Header: React.FC = () => {
                   component={RouterLink}
                   to="/register"
                   variant="contained"
-                  size="small"
-                  sx={{ fontWeight: 600 }}
+                  color="primary"
+                  sx={{
+                    fontWeight: 600,
+                    height: {
+                      xs: "38px",
+                      sm: "40px",
+                      "@media (min-width: 1024px)": "46px",
+                    },
+                    fontSize: {
+                      xs: "13px",
+                      sm: "14px",
+                      "@media (min-width: 1024px)": "16px",
+                    },
+                    px: {
+                      xs: 1.25,
+                      sm: 2,
+                      "@media (min-width: 1024px)": "22px",
+                    },
+                    minWidth: "auto",
+                    whiteSpace: "nowrap",
+                    textTransform: "none",
+                    lineHeight: 1.5,
+                    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+                  }}
                 >
-                  Create Account
+                  <Box
+                    component="span"
+                    sx={{
+                      display: "inline",
+                      "@media (min-width: 360px)": { display: "none" },
+                    }}
+                  >
+                    Join
+                  </Box>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: "none",
+                      "@media (min-width: 360px) and (max-width: 479px)": { display: "inline" },
+                    }}
+                  >
+                    Sign Up
+                  </Box>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: "none",
+                      "@media (min-width: 480px)": { display: "inline" },
+                    }}
+                  >
+                    Create Account
+                  </Box>
                 </Button>
               </Box>
             )}
@@ -382,7 +557,7 @@ export const Header: React.FC = () => {
               CampusHub
             </Typography>
           </Box>
-          <IconButton size="small" onClick={handleDrawerToggle}>
+          <IconButton size="small" onClick={handleDrawerToggle} aria-label="Close navigation menu">
             <CloseIcon size={20} />
           </IconButton>
         </Box>
@@ -497,6 +672,19 @@ export const Header: React.FC = () => {
             <ListItem disablePadding>
               <ListItemButton
                 component={RouterLink}
+                to="/notifications"
+                onClick={handleDrawerToggle}
+                sx={{ borderRadius: 1.5, mb: 0.5 }}
+              >
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <Bell size={18} />
+                </ListItemIcon>
+                <ListItemText primary="Notifications" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                component={RouterLink}
                 to="/my-registrations"
                 onClick={handleDrawerToggle}
                 sx={{ borderRadius: 1.5, mb: 0.5 }}
@@ -505,6 +693,32 @@ export const Header: React.FC = () => {
                   <Ticket size={18} />
                 </ListItemIcon>
                 <ListItemText primary="My Registrations" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                component={RouterLink}
+                to="/my-clubs"
+                onClick={handleDrawerToggle}
+                sx={{ borderRadius: 1.5, mb: 0.5 }}
+              >
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <UsersIcon size={18} />
+                </ListItemIcon>
+                <ListItemText primary="My Clubs" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                component={RouterLink}
+                to="/my-projects"
+                onClick={handleDrawerToggle}
+                sx={{ borderRadius: 1.5, mb: 0.5 }}
+              >
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <FolderGit2 size={18} />
+                </ListItemIcon>
+                <ListItemText primary="My Projects" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
