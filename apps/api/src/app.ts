@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import type { FastifyInstance, FastifyServerOptions } from "fastify";
 import corsPlugin from "./plugins/cors.js";
+import securityPlugin from "./plugins/security.js";
 import prismaPlugin from "./plugins/prisma.js";
 import errorHandlerPlugin from "./plugins/errorHandler.js";
 import authPlugin from "./plugins/auth.js";
@@ -30,6 +31,7 @@ export async function buildApp(opts: FastifyServerOptions = {}): Promise<Fastify
 
   // Core Plugins
   await fastify.register(corsPlugin);
+  await fastify.register(securityPlugin);
   await fastify.register(errorHandlerPlugin);
   await fastify.register(prismaPlugin);
   await fastify.register(authPlugin);

@@ -56,7 +56,7 @@ const modulesList = [
   { id: 7, title: "Module 7: Campus Community & Polls", status: "Completed", desc: "Announcements, lost-and-found, polls & voting", icon: MessageSquare },
   { id: 8, title: "Module 8: Notifications & Alerts", status: "Completed", desc: "In-app alerts, unread counts, broadcast engine", icon: Bell },
   { id: 9, title: "Module 9: Admin Dashboard & Analytics", status: "Completed", desc: "Platform metrics, role moderation & controls", icon: Sliders },
-  { id: 10, title: "Module 10: Production Hardening", status: "Next", desc: "Docker Compose, rate limits, audit verification", icon: ShieldCheck },
+  { id: 10, title: "Module 10: Production Hardening & Docker", status: "Completed", desc: "Docker Compose, rate limits, Helmet security & docs", icon: ShieldCheck },
 ];
 
 const DashboardHome: React.FC = () => {
