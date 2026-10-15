@@ -42,6 +42,7 @@ import { ProjectDetailPage } from "./features/projects/pages/ProjectDetailPage.j
 import { MyProjectsPage } from "./features/projects/pages/MyProjectsPage.js";
 import { CommunityFeedPage } from "./features/community/CommunityFeedPage.js";
 import { PostDetailPage } from "./features/community/PostDetailPage.js";
+import { NotificationsPage } from "./features/notifications/NotificationsPage.js";
 import { ProtectedRoute } from "./components/common/ProtectedRoute.js";
 
 const modulesList = [
@@ -52,8 +53,8 @@ const modulesList = [
   { id: 5, title: "Module 5: Clubs & Memberships", status: "Completed", desc: "Club directories, join requests, approval flows", icon: Users },
   { id: 6, title: "Module 6: Projects Collaboration", status: "Completed", desc: "Student teams, task Kanban, invitation workflows", icon: Briefcase },
   { id: 7, title: "Module 7: Campus Community & Polls", status: "Completed", desc: "Announcements, lost-and-found, polls & voting", icon: MessageSquare },
-  { id: 8, title: "Module 8: Notifications", status: "Next", desc: "In-app alerts, unread counts, event reminders", icon: Bell },
-  { id: 9, title: "Module 9: Admin Dashboard", status: "Upcoming", desc: "Platform metrics, role moderation & controls", icon: Sliders },
+  { id: 8, title: "Module 8: Notifications & Alerts", status: "Completed", desc: "In-app alerts, unread counts, broadcast engine", icon: Bell },
+  { id: 9, title: "Module 9: Admin Dashboard", status: "Next", desc: "Platform metrics, role moderation & controls", icon: Sliders },
 ];
 
 const DashboardHome: React.FC = () => {
@@ -220,6 +221,14 @@ export const App: React.FC = () => {
                   element={
                     <ProtectedRoute>
                       <MyRegistrationsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/notifications"
+                  element={
+                    <ProtectedRoute>
+                      <NotificationsPage />
                     </ProtectedRoute>
                   }
                 />

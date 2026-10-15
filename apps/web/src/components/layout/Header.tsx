@@ -14,9 +14,10 @@ import {
   Avatar,
   Divider,
 } from "@mui/material";
-import { GraduationCap, LogOut, User as UserIcon, Shield, Ticket, Users as UsersIcon, FolderGit2 } from "lucide-react";
+import { GraduationCap, LogOut, User as UserIcon, Shield, Ticket, Users as UsersIcon, FolderGit2, Bell } from "lucide-react";
 import { HealthCheckBadge } from "../common/HealthCheckBadge.js";
 import { useAuth } from "../../features/auth/AuthContext.js";
+import { NotificationBell } from "../../features/notifications/NotificationBell.js";
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -134,6 +135,8 @@ export const Header: React.FC = () => {
 
             {isAuthenticated && user ? (
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <NotificationBell />
+
                 <Chip
                   icon={<Shield size={12} />}
                   label={user.role}
@@ -176,6 +179,15 @@ export const Header: React.FC = () => {
                     </Typography>
                   </Box>
                   <Divider />
+                  <MenuItem
+                    component={RouterLink}
+                    to="/notifications"
+                    onClick={handleMenuClose}
+                    sx={{ gap: 1.5, py: 1 }}
+                  >
+                    <Bell size={16} />
+                    Notifications
+                  </MenuItem>
                   <MenuItem
                     component={RouterLink}
                     to="/my-registrations"

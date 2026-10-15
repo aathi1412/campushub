@@ -12,6 +12,7 @@ import { eventRegistrationsRoutes } from "./modules/event-registrations/event-re
 import { clubsRoutes } from "./modules/clubs/clubs.routes.js";
 import { projectsRoutes } from "./modules/projects/projects.routes.js";
 import { communityRoutes } from "./modules/community/community.routes.js";
+import { notificationsRoutes } from "./modules/notifications/notifications.routes.js";
 
 export async function buildApp(opts: FastifyServerOptions = {}): Promise<FastifyInstance> {
   const fastify = Fastify({
@@ -43,6 +44,7 @@ export async function buildApp(opts: FastifyServerOptions = {}): Promise<Fastify
   await fastify.register(clubsRoutes, { prefix: "/api/v1/clubs" });
   await fastify.register(projectsRoutes, { prefix: "/api/v1/projects" });
   await fastify.register(communityRoutes, { prefix: "/api/v1/community" });
+  await fastify.register(notificationsRoutes, { prefix: "/api/v1/notifications" });
 
   return fastify;
 }
