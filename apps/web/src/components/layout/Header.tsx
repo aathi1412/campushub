@@ -118,6 +118,14 @@ export const Header: React.FC = () => {
             >
               Projects
             </Button>
+            <Button
+              component={RouterLink}
+              to="/community"
+              color="inherit"
+              sx={{ fontWeight: 600, color: "text.secondary", "&:hover": { color: "primary.main" } }}
+            >
+              Community
+            </Button>
           </Box>
 
           {/* Right Navigation Controls */}

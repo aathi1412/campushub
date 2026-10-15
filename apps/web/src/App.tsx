@@ -40,6 +40,8 @@ import { MyClubsPage } from "./features/clubs/pages/MyClubsPage.js";
 import { ProjectsListPage } from "./features/projects/pages/ProjectsListPage.js";
 import { ProjectDetailPage } from "./features/projects/pages/ProjectDetailPage.js";
 import { MyProjectsPage } from "./features/projects/pages/MyProjectsPage.js";
+import { CommunityFeedPage } from "./features/community/CommunityFeedPage.js";
+import { PostDetailPage } from "./features/community/PostDetailPage.js";
 import { ProtectedRoute } from "./components/common/ProtectedRoute.js";
 
 const modulesList = [
@@ -49,8 +51,8 @@ const modulesList = [
   { id: 4, title: "Module 4: Registrations & Attendance", status: "Completed", desc: "Capacity transactions, attendance tracking", icon: CheckCircle2 },
   { id: 5, title: "Module 5: Clubs & Memberships", status: "Completed", desc: "Club directories, join requests, approval flows", icon: Users },
   { id: 6, title: "Module 6: Projects Collaboration", status: "Completed", desc: "Student teams, task Kanban, invitation workflows", icon: Briefcase },
-  { id: 7, title: "Module 7: Campus Community", status: "Next", desc: "Announcements, lost-and-found, polls & voting", icon: MessageSquare },
-  { id: 8, title: "Module 8: Notifications", status: "Upcoming", desc: "In-app alerts, unread counts, event reminders", icon: Bell },
+  { id: 7, title: "Module 7: Campus Community & Polls", status: "Completed", desc: "Announcements, lost-and-found, polls & voting", icon: MessageSquare },
+  { id: 8, title: "Module 8: Notifications", status: "Next", desc: "In-app alerts, unread counts, event reminders", icon: Bell },
   { id: 9, title: "Module 9: Admin Dashboard", status: "Upcoming", desc: "Platform metrics, role moderation & controls", icon: Sliders },
 ];
 
@@ -201,6 +203,8 @@ export const App: React.FC = () => {
                     </ProtectedRoute>
                   }
                 />
+                <Route path="/community" element={<CommunityFeedPage />} />
+                <Route path="/community/posts/:id" element={<PostDetailPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route
