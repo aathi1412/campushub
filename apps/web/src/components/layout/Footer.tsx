@@ -143,7 +143,7 @@ export const Footer: React.FC = () => {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1.25 }}>
               <Link
                 component={RouterLink}
-                to="/about"
+                to="#"
                 underline="hover"
                 color="text.secondary"
                 sx={{ fontSize: "0.875rem", "&:hover": { color: "primary.main" } }}
@@ -152,7 +152,7 @@ export const Footer: React.FC = () => {
               </Link>
               <Link
                 component={RouterLink}
-                to="/help"
+                to="#"
                 underline="hover"
                 color="text.secondary"
                 sx={{ fontSize: "0.875rem", "&:hover": { color: "primary.main" } }}
@@ -161,7 +161,7 @@ export const Footer: React.FC = () => {
               </Link>
               <Link
                 component={RouterLink}
-                to="/contact"
+                to="#"
                 underline="hover"
                 color="text.secondary"
                 sx={{ fontSize: "0.875rem", "&:hover": { color: "primary.main" } }}
@@ -170,7 +170,7 @@ export const Footer: React.FC = () => {
               </Link>
               <Link
                 component={RouterLink}
-                to="/privacy"
+                to="#"
                 underline="hover"
                 color="text.secondary"
                 sx={{ fontSize: "0.875rem", "&:hover": { color: "primary.main" } }}
@@ -225,7 +225,7 @@ export const Footer: React.FC = () => {
           <Box sx={{ display: "flex", gap: 3 }}>
             <Link
               component={RouterLink}
-              to="/privacy"
+              to="#"
               underline="hover"
               color="text.secondary"
               sx={{ fontSize: "0.75rem" }}
@@ -234,7 +234,7 @@ export const Footer: React.FC = () => {
             </Link>
             <Link
               component={RouterLink}
-              to="/terms"
+              to="#"
               underline="hover"
               color="text.secondary"
               sx={{ fontSize: "0.75rem" }}
