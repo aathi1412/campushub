@@ -10,6 +10,7 @@ import { usersRoutes } from "./modules/users/users.routes.js";
 import { eventsRoutes } from "./modules/events/events.routes.js";
 import { eventRegistrationsRoutes } from "./modules/event-registrations/event-registrations.routes.js";
 import { clubsRoutes } from "./modules/clubs/clubs.routes.js";
+import { projectsRoutes } from "./modules/projects/projects.routes.js";
 
 export async function buildApp(opts: FastifyServerOptions = {}): Promise<FastifyInstance> {
   const fastify = Fastify({
@@ -39,6 +40,7 @@ export async function buildApp(opts: FastifyServerOptions = {}): Promise<Fastify
   await fastify.register(eventsRoutes, { prefix: "/api/v1/events" });
   await fastify.register(eventRegistrationsRoutes, { prefix: "/api/v1" });
   await fastify.register(clubsRoutes, { prefix: "/api/v1/clubs" });
+  await fastify.register(projectsRoutes, { prefix: "/api/v1/projects" });
 
   return fastify;
 }
