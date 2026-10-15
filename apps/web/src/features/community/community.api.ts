@@ -130,11 +130,23 @@ export const communityApi = {
 
   // Polls
   async listPolls(params?: {
+    status?: "active" | "expired" | "all";
     activeOnly?: boolean;
+    search?: string;
     page?: number;
     limit?: number;
   }): Promise<{ polls: PollItem[]; total: number; page: number; totalPages: number }> {
-    const res = await apiClient.get<ApiResponse<PollItem[]>>("/community/polls", { params });
+    const queryParams: Record<string, unknown> = {};
+    if (params?.page) queryParams.page = params.page;
+    if (params?.limit) queryParams.limit = params.limit;
+    if (params?.search) queryParams.search = params.search;
+    if (params?.status) {
+      queryParams.status = params.status;
+    } else if (params?.activeOnly !== undefined) {
+      queryParams.status = params.activeOnly ? "active" : "all";
+    }
+
+    const res = await apiClient.get<ApiResponse<PollItem[]>>("/community/polls", { params: queryParams });
     return {
       polls: res.data.data,
       total: res.data.meta?.total ?? res.data.data.length,
