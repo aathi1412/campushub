@@ -3,7 +3,7 @@ import { Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Container,
-  Grid,
+  Grid2 as Grid,
   Typography,
   Link,
   Divider,
@@ -14,7 +14,6 @@ import {
   Users,
   Briefcase,
   MessageSquare,
-  Layers,
   Heart,
 } from "lucide-react";
 
@@ -32,9 +31,9 @@ export const Footer: React.FC = () => {
       }}
     >
       <Container maxWidth="xl">
-        <Grid container spacing={4} sx={{ mb: 4 }}>
+        <Grid container spacing={{ xs: 4, md: 14, lg: 30 }} sx={{ mb: 4 }} >
           {/* Brand & Mission Column */}
-          <Grid item xs={12} md={4}>
+          <Grid>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
               <Box
                 sx={{
@@ -57,13 +56,10 @@ export const Footer: React.FC = () => {
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 340, mb: 2, lineHeight: 1.6 }}>
               The unified student-focused campus management platform. Connecting students, clubs, peer projects, and community life in one cohesive portal.
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-              Engineered with <Heart size={14} color="#ef4444" fill="#ef4444" /> for university communities.
-            </Typography>
           </Grid>
 
           {/* Platform Navigation */}
-          <Grid item xs={6} sm={4} md={2.5}>
+          <Grid >
             <Typography variant="subtitle2" fontWeight={700} color="text.primary" sx={{ mb: 2 }}>
               Campus Life
             </Typography>
@@ -136,7 +132,7 @@ export const Footer: React.FC = () => {
           </Grid>
 
           {/* Resources & Support */}
-          <Grid item xs={6} sm={4} md={2.5}>
+          <Grid >
             <Typography variant="subtitle2" fontWeight={700} color="text.primary" sx={{ mb: 2 }}>
               Support & Info
             </Typography>
@@ -181,7 +177,7 @@ export const Footer: React.FC = () => {
           </Grid>
 
           {/* Platform & Architecture */}
-          <Grid item xs={12} sm={4} md={3}>
+          {/* <Grid item xs={12} sm={4} md={3}>
             <Typography variant="subtitle2" fontWeight={700} color="text.primary" sx={{ mb: 2 }}>
               Platform Engineering
             </Typography>
@@ -204,7 +200,7 @@ export const Footer: React.FC = () => {
               <Layers size={16} />
               Platform Modules Architecture →
             </Link>
-          </Grid>
+          </Grid> */}
         </Grid>
 
         <Divider sx={{ my: 3 }} />
@@ -219,10 +215,16 @@ export const Footer: React.FC = () => {
             gap: 2,
           }}
         >
-          <Typography variant="caption" color="text.secondary">
-            © {new Date().getFullYear()} CampusHub Inc. All rights reserved.
-          </Typography>
-          <Box sx={{ display: "flex", gap: 3 }}>
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              © {new Date().getFullYear()} CampusHub Inc. All rights reserved.
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              Engineered with <Heart size={14} color="#ef4444" fill="#ef4444" /> for university communities.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 3, mr: 6 }}>
             <Link
               component={RouterLink}
               to="#"
@@ -241,19 +243,10 @@ export const Footer: React.FC = () => {
             >
               Terms of Use
             </Link>
-            <Link
-              component={RouterLink}
-              to="/platform"
-              underline="hover"
-              color="text.secondary"
-              sx={{ fontSize: "0.75rem" }}
-            >
-              System Status
-            </Link>
           </Box>
         </Box>
       </Container>
-    </Box>
+    </Box >
   );
 };
 export default Footer;
