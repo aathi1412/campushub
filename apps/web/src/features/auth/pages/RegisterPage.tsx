@@ -40,12 +40,12 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 const departments = [
   "Computer Science & Engineering",
   "Information Technology",
+  "Artificial Intelligence and Data Science",
+  "Electronics and Communication Engineering",
   "Electrical & Electronics Engineering",
   "Mechanical Engineering",
   "Civil Engineering",
-  "Business & Management",
-  "Arts & Sciences",
-  "Other",
+  "Others",
 ];
 
 export const RegisterPage: React.FC = () => {
@@ -219,7 +219,7 @@ export const RegisterPage: React.FC = () => {
                   error={!!errors.yearOfStudy}
                   helperText={errors.yearOfStudy?.message}
                 >
-                  {[1, 2, 3, 4, 5, 6].map((yr) => (
+                  {[1, 2, 3, 4].map((yr) => (
                     <MenuItem key={yr} value={yr}>
                       Year {yr}
                     </MenuItem>
