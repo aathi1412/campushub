@@ -289,7 +289,7 @@ export const HomePage: React.FC = () => {
               </Box>
 
               {/* Trust/Live Metrics Bar */}
-              <Box
+              {/* <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -326,7 +326,7 @@ export const HomePage: React.FC = () => {
                     Capacity & Ticketing
                   </Typography>
                 </Box>
-              </Box>
+              </Box> */}
             </Grid>
 
             {/* Right Graphical Illustration */}
