@@ -27,9 +27,11 @@ const prismaPlugin: FastifyPluginAsync = async (fastify) => {
 
   try {
     await prisma.$connect();
-    fastify.log.info(" Connected to MySQL database via Prisma 7");
+    fastify.log.info("Connected to MySQL database via Prisma 7");
   } catch (err) {
-    fastify.log.error(err, "⚠️ Failed to connect to database during startup");
+    fastify.log.error({ err }, "Failed to connect to MySQL");
+    await prisma.$disconnect().catch(() => { });
+    throw err;
   }
 
   fastify.decorate("prisma", prisma);
