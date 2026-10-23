@@ -1,17 +1,8 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 import { z } from "zod";
 
 // Load environment variables
 dotenv.config();
-
-// If DATABASE_URL is not set, also try loading from apps/api/.env
-if (!process.env.DATABASE_URL) {
-  const currentDir = path.dirname(fileURLToPath(import.meta.url));
-  const apiEnvPath = path.resolve(currentDir, "../../.env");
-  dotenv.config({ path: apiEnvPath });
-}
 
 export const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535),
